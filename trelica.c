@@ -33,8 +33,45 @@ void verificar_flambagem(Barra *barra) {
     if (barra->forca < 0) { // Só se for compressão
         float P_cr = (PI * PI * E * barra->I) / pow(barra->L, 2);
         barra->coef_seguranca_flambagem = P_cr / fabs(barra->forca);
-    } else {
-        barra->coef_seguranca_flambagem = INFINITY; // Não aplicável
+    }
+}
+
+// Recalcula o momento de inércia baseado na nova área
+float recalcular_I(float area) {
+    // Considera seção quadrada vazada proporcional: A = a_ext² - a_int²
+    // Vamos assumir que a_int = 0.75 * a_ext, como no exemplo original
+    float a_ext = sqrt(area / (1 - 0.75 * 0.75));
+    float a_int = 0.75 * a_ext;
+    return (pow(a_ext, 4) - pow(a_int, 4)) / 12.0;
+}
+
+// Função para otimizar as áreas das barras
+void otimizar_trelica(Barra barras[], int num_barras) {
+    float area_minima = 0.00001; // Área mínima permitida
+
+    for (int i = 0; i < num_barras; i++) {
+        while (1) {
+            // Reduz a área
+            barras[i].area *= 0.9;
+
+            // Recalcula momento de inércia e checa segurança
+            barras[i].I = recalcular_I(barras[i].area);
+            verificar_tensao(&barras[i]);
+            verificar_flambagem(&barras[i]);
+
+            // Se violar qualquer restrição, volta um passo e para
+            if (barras[i].coef_seguranca_tensao < N_TENSAO || 
+                barras[i].coef_seguranca_flambagem < N_FLAMBAGEM || 
+                barras[i].area <= area_minima) {
+                
+                // Reverte a última redução
+                barras[i].area /= 0.9;
+                barras[i].I = recalcular_I(barras[i].area);
+                verificar_tensao(&barras[i]);
+                verificar_flambagem(&barras[i]);
+                break;
+            }
+        }
     }
 }
 
@@ -53,4 +90,10 @@ void imprimir_resultados(No nos[], int num_nos, Barra barras[], int num_barras) 
                i+1, barras[i].forca, barras[i].coef_seguranca_tensao,
                barras[i].coef_seguranca_flambagem);
     }
+
+    float massa = 0;
+    for (int i = 0; i < 2; i++) {
+        massa += 2800.0 * barras[i].area * barras[i].L; // ρ * área * comprimento
+    }
+    printf("\nMassa total da trelica: %.4f kg\n", massa);
 }
