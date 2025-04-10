@@ -4,9 +4,9 @@
 #include <math.h>
 
 // Constantes 
-#define PI 3.14
-#define E 70e9          // Módulo de Young (Pa)
-#define Sy 70e6        // Tensão de escoamento (Pa)
+#define PI 3.14159
+#define E 70e9          // Módulo de elasticidade longitudinal (Pa)
+#define Sy 70e6         // Tensão de escoamento (Pa)
 #define F 1000          // Força aplicada no nó 1 (N)
 #define N_TENSAO 2      // Coeficiente de segurança (tensão)
 #define N_FLAMBAGEM 1.2 // Coeficiente de segurança (flambagem)
@@ -34,5 +34,7 @@ void calcular_forcas_axiais(Barra barras[], No nos[], int num_barras);
 void verificar_tensao(Barra *barra);
 void verificar_flambagem(Barra *barra);
 void imprimir_resultados(No nos[], int num_nos, Barra barras[], int num_barras);
+void otimizar_trelica(Barra barras[], int num_barras);
+float recalcular_I(float area);
 
 #endif
