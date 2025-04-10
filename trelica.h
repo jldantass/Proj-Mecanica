@@ -30,7 +30,8 @@ typedef struct {
 
 // Funções
 void calcular_comprimento(Barra *barra, No nos[]);
-void calcular_forcas_axiais(Barra barras[], No nos[], int num_barras);
+void calcular_forcas_por_equilibrio(Barra barras[], No nos[]);
+void resolver_sistema_2x2(float A[2][2], float b[2], float x[2]);
 void verificar_tensao(Barra *barra);
 void verificar_flambagem(Barra *barra);
 void imprimir_resultados(No nos[], int num_nos, Barra barras[], int num_barras);
