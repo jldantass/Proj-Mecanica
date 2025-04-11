@@ -3,32 +3,32 @@
 
 #include <math.h>
 
-// Constantes 
+// defindo as constantes 
 #define PI 3.14159
-#define E 70e9          // Módulo de elasticidade longitudinal (Pa)
-#define Sy 70e6         // Tensão de escoamento (Pa)
-#define F 1000          // Força aplicada no nó 1 (N)
-#define N_TENSAO 2      // Coeficiente de segurança (tensão)
-#define N_FLAMBAGEM 1.2 // Coeficiente de segurança (flambagem)
+#define E 70e9          // modulo de elasticidade longitudinal 
+#define Sy 70e6         // tensao de escoamento 
+#define F 1000          // força aplicada no nó 1 
+#define N_TENSAO 2      // coef de segurança p/ tensao
+#define N_FLAMBAGEM 1.2 // coef de segurança p/ flambagem
 
-// Struct pro nó
+// struct p/ nó
 typedef struct {
-    float x, y;                 // Coordenadas do nó
-    float desloc_x, desloc_y;   // Deslocamentos do nó
+    float x, y;                 // coordenadas do nó
+    float desloc_x, desloc_y;   // deslocamentos do nó
 } No;
 
-// Struct pra barra
+// struct p/ barra
 typedef struct {
-    int no1, no2;                     // Nós
-    float area;                      // Área da seção transversal (m²)
-    float I;                         // Momento de inércia (m⁴)
-    float L;                         // Comprimento da barra (m)
-    float forca;                     // Força axial (N)
-    float coef_seguranca_tensao;     // Coeficiente de segurança para tensão
-    float coef_seguranca_flambagem;  // Coeficiente para flambagem 
+    int no1, no2;                    // nós
+    float area;                      // área (m²)
+    float I;                         // momento de inercia
+    float L;                         // comp da barra
+    float forca;                     // força 
+    float coef_seguranca_tensao;     // coef de segurança p/ tensao
+    float coef_seguranca_flambagem;  // coef de segurança p/ flambagem 
 } Barra;
 
-// Funções
+// funçoes
 void calcular_comprimento(Barra *barra, No nos[]);
 void calcular_forcas_por_equilibrio(Barra barras[], No nos[]);
 void resolver_sistema_2x2(float A[2][2], float b[2], float x[2]);
