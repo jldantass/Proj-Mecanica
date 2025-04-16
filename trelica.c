@@ -18,25 +18,26 @@ void resolver_sistema_2x2(float A[2][2], float b[2], float x[2]) {
     x[1] = (A[0][0]*b[1] - A[1][0]*b[0]) / det; // x0 = (b00*a1 - b10*a0)/det
 }
 
+// calcular forças das barras
 void calcular_forcas_por_equilibrio(Barra barras[], No nos[]) {
     // identifica os nós
     int no_movel = 0; // inf direito (movel)
     int no1 = barras[0].no2; // sup esquerdo (fixo)
     int no2 = barras[1].no2; // inf esquerdo (fixo)
 
-    // vetores barra 0
-    float dx0 = nos[no1].x - nos[no_movel].x;
-    float dy0 = nos[no1].y - nos[no_movel].y;
-    float L0 = sqrt(dx0*dx0 + dy0*dy0);
-    float cos0 = dx0 / L0;
-    float sin0 = dy0 / L0;
+    // vetores barra 0 (1)
+    float dx0 = nos[no1].x - nos[no_movel].x; // direcao x
+    float dy0 = nos[no1].y - nos[no_movel].y; // direcao y
+    float L0 = sqrt(dx0*dx0 + dy0*dy0); // comprimento da barra 1
+    float cos0 = dx0 / L0; // cos 1
+    float sin0 = dy0 / L0; // sen 1
 
-    // vetores barra 1
-    float dx1 = nos[no2].x - nos[no_movel].x;
-    float dy1 = nos[no2].y - nos[no_movel].y;
-    float L1 = sqrt(dx1*dx1 + dy1*dy1);
-    float cos1 = dx1 / L1;
-    float sin1 = dy1 / L1;
+    // vetores barra 1 (2)
+    float dx1 = nos[no2].x - nos[no_movel].x; // direcao x
+    float dy1 = nos[no2].y - nos[no_movel].y; // direcao y
+    float L1 = sqrt(dx1*dx1 + dy1*dy1); // comprimento da barra 2
+    float cos1 = dx1 / L1; // cos 2
+    float sin1 = dy1 / L1; // sen 2
 
     // montar sistema
     float A[2][2] = {
@@ -46,7 +47,7 @@ void calcular_forcas_por_equilibrio(Barra barras[], No nos[]) {
     float b[2] = {0, -F};
 
     // forças nas barras
-    float f[2]; 
+    float f[2]; // armazenar as duas forças
     resolver_sistema_2x2(A, b, f);
 
     barras[0].forca = f[0];
@@ -55,6 +56,7 @@ void calcular_forcas_por_equilibrio(Barra barras[], No nos[]) {
 
 // verifica se a tensao ta dentro do limite
 void verificar_tensao(Barra *barra) {
+    // calculo da tensao normal
     float sigma = fabs(barra->forca) / barra->area; // (SIGMA = |F|/A)
     barra->coef_seguranca_tensao = Sy / sigma; // COEF. SEG. TENSAO= (TENSAO DE ESCOAMENTO/SIGMA)
 }
@@ -63,6 +65,7 @@ void verificar_tensao(Barra *barra) {
 void verificar_flambagem(Barra *barra) {
     // se a barra estiver em compressao (força < 0)
     if (barra->forca < 0) {
+        // calculo da carga critica da flambagem
         float P_cr = (PI * PI * E * barra->I) / pow(barra->L, 2); // Pcr = (PI² * E * I) / L²
         barra->coef_seguranca_flambagem = P_cr / fabs(barra->forca); // COEF. SEG. FLAMBAGEM = Pcr / |F|
     } else {
@@ -70,7 +73,7 @@ void verificar_flambagem(Barra *barra) {
     }
 }
 
-// recalcula o momento de inércia (I) baseado na nova area
+// recalcula o momento de inércia (I) baseado na nova area, que vai ser utilizado para otimizar a treliça
 float recalcular_I(float area) {
     // considera a seção quadrada vazada proporcional: A = a_ext² - a_int²
     // assumindo que a_int = 0.75 * a_ext, como no exemplo original
