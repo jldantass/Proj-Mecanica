@@ -3,32 +3,29 @@
 
 #include <math.h>
 
-// defindo as constantes 
+// Constantes
 #define PI 3.14159
-#define E 70e9          // modulo de elasticidade longitudinal 
-#define Sy 70e6         // tensao de escoamento 
-#define F 1000          // força aplicada no nó 1 
-#define N_TENSAO 2      // coef de segurança p/ tensao
-#define N_FLAMBAGEM 1.2 // coef de segurança p/ flambagem
+#define E 70e9          // módulo de elasticidade
+#define Sy 70e6         // tensão de escoamento
+#define F 1000          // força aplicada
+#define N_TENSAO 2      // coef. segurança tensão
+#define N_FLAMBAGEM 1.2 // coef. segurança flambagem
 
-// struct p/ nó
+// Estruturas
 typedef struct {
-    float x, y;                 // coordenadas do nó
-    float desloc_x, desloc_y;   // deslocamentos do nó
+    float x, y;
+    float desloc_x, desloc_y;
 } No;
 
-// struct p/ barra
 typedef struct {
-    int no1, no2;                    // nós
-    float area;                      // área (m²)
-    float I;                         // momento de inercia
-    float L;                         // comp da barra
-    float forca;                     // força 
-    float coef_seguranca_tensao;     // coef de segurança p/ tensao
-    float coef_seguranca_flambagem;  // coef de segurança p/ flambagem 
+    int no1, no2;
+    float area, I, L;
+    float forca;
+    float coef_seguranca_tensao;
+    float coef_seguranca_flambagem;
 } Barra;
 
-// funçoes
+// Funções
 void calcular_comprimento(Barra *barra, No nos[]);
 void calcular_forcas_por_equilibrio(Barra barras[], No nos[]);
 void resolver_sistema_2x2(float A[2][2], float b[2], float x[2]);
@@ -37,5 +34,6 @@ void verificar_flambagem(Barra *barra);
 void imprimir_resultados(No nos[], int num_nos, Barra barras[], int num_barras);
 void otimizar_trelica(Barra barras[], int num_barras);
 float recalcular_I(float area);
+void calcular_deslocamentos(Barra barras[], No nos[], int num_barras);
 
 #endif
