@@ -18,11 +18,10 @@ int main() {
     // ligamento dos nós
     barras[0].no1 = 0;  // diagonal (nó 1 ao nó 2)
     barras[0].no2 = 1;
-
     barras[1].no1 = 0;  // base (nó 1 ao nó 3)
     barras[1].no2 = 2;
 
-    // atreibuir área e I (momento de inercia)
+    // atribuir área e I (momento de inercia)
     for (int i = 0; i < 2; i++) {
         barras[i].area = area;
         barras[i].I = I;
@@ -33,15 +32,16 @@ int main() {
         calcular_comprimento(&barras[i], nos);
     }
 
-    // calcular as forças e coeficientes antes da otimização
+    // calcular as forças e deslocamentos antes da otimização
     calcular_forcas_por_equilibrio(barras, nos);
+    calcular_deslocamentos(barras, nos, 2);
 
     for (int i = 0; i < 2; i++) {
         verificar_tensao(&barras[i]);
         verificar_flambagem(&barras[i]);
     }
 
-    // calcula massa antes da otimização para ver a reduçao no final
+    // calcula massa inicial
     float massa_inicial = 0;
     for (int i = 0; i < 2; i++) {
         massa_inicial += 2800.0 * barras[i].area * barras[i].L;
@@ -53,14 +53,15 @@ int main() {
     // otimiza as areas das barras
     otimizar_trelica(barras, 2);
 
-    // recalca as forças e coeficientes depois da otimização
+    // recalcula forças e deslocamentos após otimização
     calcular_forcas_por_equilibrio(barras, nos);
+    calcular_deslocamentos(barras, nos, 2);
     for (int i = 0; i < 2; i++) {
         verificar_tensao(&barras[i]);
         verificar_flambagem(&barras[i]);
     }
 
-    // calcula massa depois otimização para ver a reduçao no final
+    // calcula massa final
     float massa_final = 0;
     for (int i = 0; i < 2; i++) {
         massa_final += 2800.0 * barras[i].area * barras[i].L;
@@ -69,7 +70,7 @@ int main() {
     printf("\n--- APOS OTIMIZACAO ---\n");
     imprimir_resultados(nos, 3, barras, 2);
 
-    // compara as massas inicial e final
+    // compara as massas
     float reducao_percentual = ((massa_inicial - massa_final) / massa_inicial) * 100.0;
     printf("\nMassa inicial: %.4f kg", massa_inicial);
     printf("\nMassa final:   %.4f kg", massa_final);
