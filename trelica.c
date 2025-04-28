@@ -3,7 +3,6 @@
 #include <math.h>
 
 // calcula o comprimento da barra usando as coord. dos nós
-// L = raiz( (x2-x1)² - (y2-y1)² )
 // precisa para calcular a flambagem, massa da barra e direçao dos vetores
 void calcular_comprimento(Barra *barra, No nos[]) {
     float dx = nos[barra->no2].x - nos[barra->no1].x;
